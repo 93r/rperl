@@ -128,10 +128,13 @@ WriteMakefile(
         'Math::BigInt::GMP'   => '1.46',
         'Math::GSL'           => '0.39',
         'Alien::astyle'       => '0.009',
-        'Alien::PCRE2'        => '0.015',     # for regex support
-        'Alien::JPCRE2'       => '0.012',     # for regex support
+
+	# 93r: disabled jpcre2 and mongodb
+	#'Alien::PCRE2'        => '0.015',     # for regex support
+	#'Alien::JPCRE2'       => '0.012',     # for regex support
 #        'Alien::Pluto'        => '0.003',
-        'MongoDB'             => "v1.8.0",    # NEED FIX: EU::MM does not seem to handle v-strings properly???
+	#'MongoDB'             => "v1.8.0",    # NEED FIX: EU::MM does not seem to handle v-strings properly???
+	
         'IPC::Run3'           => '0.048',      # for subcompile, testing, etc
 
         # RPERL SYSTEM (NON-USER) DEPENDENCIES

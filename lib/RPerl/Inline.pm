@@ -10,8 +10,9 @@ use English;        # for $OSNAME
 use RPerl::Config;  # for $RPerl::DEBUG
 use Alien::GMP;     # prerequisite for Math::BigInt::GMP
 #use Alien::GSL;     # prerequisite for Math::GSL
-use Alien::PCRE2;   # for regex support
-use Alien::JPCRE2;  # for regex support
+# 93r: disabled jpcre2 and related stuff
+#use Alien::PCRE2;   # for regex support
+#use Alien::JPCRE2;  # for regex support
 use File::Spec;     # for splitpath() and catpath()
 use IPC::Cmd qw(can_run);
 use IPC::Run3 qw(run3);
@@ -20,24 +21,25 @@ use IPC::Run3 qw(run3);
 
 
 
+# 93r: disabled
 # MongoDB support
 # NEED FIX: add Alien::PkgConfig & Alien::Mongo* dependencies; add error checking for missing pkg-config or bad return value
 
 #our $mongodb_include_dir = File::Spec->catpath(q{}, q{FOO}, q{include});  # NOT USED, replaced by pkg-config at compile time as in Compiler.pm
 
-my $pkgconfig_path = undef;
-$pkgconfig_path = can_run('pkg-config');
+#my $pkgconfig_path = undef;
+#$pkgconfig_path = can_run('pkg-config');
  
 # NEED ENABLE: uncomment when Alien::PkgConfig dependency is added
 #if ( not defined $pkgconfig_path ) {
 #    die 'ERROR xxxxxxx, yyy: Command `pkg-config` not found, dying' . "\n" );
 #}
 
-my $mongodb_pkgconfig_command = $pkgconfig_path . ' --libs-only-L libmongocxx';
-my $mongodb_pkgconfig_command_stdout = q{};
-my $mongodb_pkgconfig_command_stderr = q{};
-run3( $mongodb_pkgconfig_command, \undef, \$mongodb_pkgconfig_command_stdout, \$mongodb_pkgconfig_command_stderr );  # disable STDIN w/ \undef
-my $mongodb_pkgconfig_command_exit_status = $CHILD_ERROR >> 8;
+#my $mongodb_pkgconfig_command = $pkgconfig_path . ' --libs-only-L libmongocxx';
+#my $mongodb_pkgconfig_command_stdout = q{};
+#my $mongodb_pkgconfig_command_stderr = q{};
+#run3( $mongodb_pkgconfig_command, \undef, \$mongodb_pkgconfig_command_stdout, \$mongodb_pkgconfig_command_stderr );  # disable STDIN w/ \undef
+#my $mongodb_pkgconfig_command_exit_status = $CHILD_ERROR >> 8;
 
 #RPerl::diag( 'in RPerl::Inline, have $CHILD_ERROR = ' . $CHILD_ERROR . "\n" );
 #RPerl::diag( 'in RPerl::Inline, have $mongodb_pkgconfig_command_exit_status = ' . $mongodb_pkgconfig_command_exit_status . "\n" );
@@ -54,9 +56,9 @@ my $mongodb_pkgconfig_command_exit_status = $CHILD_ERROR >> 8;
 # Perhaps you should add the directory containing `libmongocxx.pc' to the PKG_CONFIG_PATH environment variable
 # No package 'libmongocxx' found
 #our $mongodb_lib_dir = `pkg-config --libs-only-L libmongocxx`;  # WRONG: causes uncontrolled STDERR output above & numerous false errors
-our $mongodb_lib_dir = $mongodb_pkgconfig_command_stdout;
-substr $mongodb_lib_dir, 0, 2, q{};  # trim leading '-L'
-chomp $mongodb_lib_dir;  # trim trailing newline
+#our $mongodb_lib_dir = $mongodb_pkgconfig_command_stdout;
+#substr $mongodb_lib_dir, 0, 2, q{};  # trim leading '-L'
+#chomp $mongodb_lib_dir;  # trim trailing newline
 
 
 
@@ -73,17 +75,19 @@ our $gmp_lib_dir = File::Spec->catpath(q{}, $gmp_dir, q{lib});
 #our $gsl_include_dir = File::Spec->catpath(q{}, $gsl_dir, q{include});
 #our $gsl_lib_dir = File::Spec->catpath(q{}, $gsl_dir, q{lib});
 
+# 93r: disabled
 # PCRE2 support
-my $pcre2_dir = Alien::PCRE2->dist_dir();
+#my $pcre2_dir = Alien::PCRE2->dist_dir();
 #print {*STDERR} "\n\n", q{<<< DEBUG >>> in RPerl::Inline, have $pcre2_dir = '}, $pcre2_dir, q{'}, "\n\n";
-our $pcre2_include_dir = File::Spec->catpath(q{}, $pcre2_dir, q{include});
-my $pcre2_lib_dir = File::Spec->catpath(q{}, $pcre2_dir, q{lib});
+#our $pcre2_include_dir = File::Spec->catpath(q{}, $pcre2_dir, q{include});
+#my $pcre2_lib_dir = File::Spec->catpath(q{}, $pcre2_dir, q{lib});
 #print {*STDERR} "\n\n", q{<<< DEBUG >>> in RPerl::Inline, have $pcre2_include_dir = '}, $pcre2_include_dir, q{'}, "\n\n";
 
+# 93r: disabled
 # JPCRE2 support
-my $jpcre2_dir = Alien::JPCRE2->dist_dir();
+#my $jpcre2_dir = Alien::JPCRE2->dist_dir();
 #print {*STDERR} "\n\n", q{<<< DEBUG >>> in RPerl::Inline, have $jpcre2_dir = '}, $jpcre2_dir, q{'}, "\n\n";
-our $jpcre2_include_dir = File::Spec->catpath(q{}, $jpcre2_dir, q{include});
+#our $jpcre2_include_dir = File::Spec->catpath(q{}, $jpcre2_dir, q{include});
 #my $jpcre2_lib_dir = File::Spec->catpath(q{}, $jpcre2_dir, q{lib});  # NOT USED
 #print {*STDERR} "\n\n", q{<<< DEBUG >>> in RPerl::Inline, have $jpcre2_include_dir = '}, $jpcre2_include_dir, q{'}, "\n\n";
 
@@ -149,8 +153,9 @@ if (defined $Config::Config{ccdlflags}) {
     }
 }
 
+# 93r: disabled
 # for regex support
-$CCFLAGSEX .= ' -L"' . $pcre2_lib_dir . '"';
+#$CCFLAGSEX .= ' -L"' . $pcre2_lib_dir . '"';
 
 my $optimize;
 if ($is_msvc_compiler) {
@@ -175,7 +180,11 @@ our %ARGS = (
 #  ccflags => $Config::Config{ccflags} . ' -DNO_XSLOCKS -Wno-deprecated -std=c++0x -Wno-reserved-user-defined-literal -Wno-literal-suffix',
 #    force_build => 1,  # debug use only
     # put . (current dir) last to avoid finding coincidentally-named file './foo' instead of '/SYSTEM/PATH/foo.h' from '#include <foo>' 
-    inc               => '-I' . $RPerl::INCLUDE_PATH . ' -Ilib -I' . $pcre2_include_dir . ' -I' . $jpcre2_include_dir . ' -I.',
+
+    # 93r: changed
+    #inc               => '-I' . $RPerl::INCLUDE_PATH . ' -Ilib -I' . $pcre2_include_dir . ' -I' . $jpcre2_include_dir . ' -I.',
+    inc               => '-I' . $RPerl::INCLUDE_PATH . ' -Ilib -I.',
+
     build_noisy       => ( $ENV{RPERL_DEBUG} or $RPerl::DEBUG ),  # suppress or display actual g++ compiler commands
     clean_after_build => 0, # used by Inline::C(PP) to cache build, also used by Inline::Filters to save Filters*.c files for use in gdb debugging
     warnings          => (((not defined $ENV{RPERL_WARNINGS}) or $ENV{RPERL_WARNINGS}) and $RPerl::WARNINGS),  # suppress or display Inline warnings
@@ -200,14 +209,15 @@ our %ARGS = (
         '#include <ratio>',
         '#include <chrono>',
 
+	# 93r: disabled
         # for regex support
         # DEV NOTE, CORRELATION #rp024: sync include files & other preprocessor directives in both RPerl/Inline.pm and rperlstandalone.h
-        '#undef do_open',         # fix conflict between jpcre2.hpp subdep locale_facets_nonio.h & other uknown file, 'error: macro "do_open" requires 7 arguments, but only 2 given'
-        '#undef do_close',        # fix conflict between jpcre2.hpp subdep locale_facets_nonio.h & other uknown file, 'error: macro "do_close" requires 2 arguments, but only 1 given'
-        '#include "jpcre2.hpp"',
+	#'#undef do_open',         # fix conflict between jpcre2.hpp subdep locale_facets_nonio.h & other uknown file, 'error: macro "do_open" requires 7 arguments, but only 2 given'
+	#'#undef do_close',        # fix conflict between jpcre2.hpp subdep locale_facets_nonio.h & other uknown file, 'error: macro "do_close" requires 2 arguments, but only 1 given'
+	#'#include "jpcre2.hpp"',
         # DEV NOTE, CORRELATION #rp300: must link against all bit width libs to allow automatic selection
-        'typedef jpcre2::select<char>::Regex regex;',  # automatically selects correct character bit width based on system, 8 or 16 or 32
-        'typedef jpcre2::SIZE_T regexsize;',  # used by substitution (replace) count type
+	#'typedef jpcre2::select<char>::Regex regex;',  # automatically selects correct character bit width based on system, 8 or 16 or 32
+	#'typedef jpcre2::SIZE_T regexsize;',  # used by substitution (replace) count type
     ],
     classes => sub { join('::', split('__', shift)); }
 );
